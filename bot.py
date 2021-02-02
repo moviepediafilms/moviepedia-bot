@@ -13,7 +13,7 @@ logger = logging.getLogger()
 
 COMMANDS = {}
 
-default_filter = Filters.chat(username=["zee_k"])
+default_filter = Filters.chat(username=config.ADMINS.split(","))
 
 
 def get_post_name(movie_id):
