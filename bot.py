@@ -16,6 +16,10 @@ COMMANDS = {}
 default_filter = Filters.chat(username=["zee_k"])
 
 
+def get_post_name(movie_id):
+    return str(movie_id).rjust(10, "0") + ".png"
+
+
 def command(*args, **kwargs):
     def wrapper(fn):
         @wraps(fn)
@@ -70,13 +74,18 @@ def _set_poster(poster_path, movie_id):
         movie_id (int): pk of movie
     """
     src_poster = os.path.join(".", poster_path)
-    dest_poster = os.path.join(
-        config.POSTER_PATH, str(movie_id).rjust(10, "0") + ".png"
-    )
+    dest_poster = os.path.join(config.POSTER_PATH, get_post_name(movie_id))
     os.rename(src_poster, dest_poster)
     logger.info(
         f"move {poster_path} to {config.POSTER_PATH}/{str(movie_id).rjust(10, '0')}.png"
     )
+
+
+def _update_movie(movie_id):
+    movie = core_session.query(Movie).filter_by(id=movie_id).first()
+    if not movie.poster:
+        movie.poster = "/media/posters/" + get_post_name(movie_id)
+        core_session.commit()
 
 
 @command()
@@ -101,5 +110,6 @@ def set_poster(update, context):
                     text = "You have to reply to a image with dimensions 289, 512"
                 else:
                     _set_poster(poster_path, movie_id)
+                    _update_movie(movie_id)
                     text = f"Poster updated for '{movie.title}'\nNew poster at: {config.BASE_URL + movie.poster}"
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
