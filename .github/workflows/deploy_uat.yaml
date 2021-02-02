@@ -1,7 +1,7 @@
 name: Deploy On UAT
 on:
   push:
-    branches: [ master ]
+    branches: [ uat ]
   workflow_dispatch:
 jobs:
   deploy:
