@@ -69,7 +69,14 @@ def _set_poster(poster_path, movie_id):
         poster_path (str): string path of poster file referenced by sender
         movie_id (int): pk of movie
     """
-    logger.info(f"move {poster_path} to {config.POSTER_PATH}/{str(movie_id):010d}.png")
+    src_poster = os.path.join(".", poster_path)
+    dest_poster = os.path.join(
+        config.POSTER_PATH, str(movie_id).rjust(10, "0") + ".png"
+    )
+    os.rename(src_poster, dest_poster)
+    logger.info(
+        f"move {poster_path} to {config.POSTER_PATH}/{str(movie_id).rjust(10, '0')}.png"
+    )
 
 
 @command()
