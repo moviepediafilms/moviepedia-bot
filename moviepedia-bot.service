@@ -1,0 +1,12 @@
+[Unit]
+Description=telegram bot @moviepediabot
+After=network.target
+
+[Service]
+User=zeeshan
+Group=www-data
+WorkingDirectory=/home/zeeshan/moviepedia-bot
+ExecStart=/home/zeeshan/.local/bin/pipenv run python run.py
+
+[Install]
+WantedBy=multi-user.target

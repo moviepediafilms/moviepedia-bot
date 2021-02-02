@@ -46,7 +46,12 @@ def start(update, context):
 
 
 def _get_poster_photo(message):
-    photo = next(photo for photo in message.photo if (photo.width, photo.height) == ())
+    photo = next(
+        (photo for photo in message.photo if (photo.width, photo.height) == (289, 512)),
+        None,
+    )
+    if not photo:
+        return
     file = photo.get_file()
     file_path = file.download(
         os.path.join("posters", f"{int(time.time())}.png"), timeout=100
@@ -64,7 +69,7 @@ def _set_poster(poster_path, movie_id):
         poster_path (str): string path of poster file referenced by sender
         movie_id (int): pk of movie
     """
-    logger.info(f"move {poster_path} to media directory with name {movie_id}.png")
+    logger.info(f"move {poster_path} to {config.POSTER_PATH}/{str(movie_id):010d}.png")
 
 
 @command()
@@ -85,6 +90,9 @@ def set_poster(update, context):
                 poster_path = _get_poster_photo(
                     update.effective_message.reply_to_message
                 )
-                _set_poster(poster_path, movie_id)
-                text = f"Poster updated for '{movie.title}'\nNew poster at: {config.BASE_URL + movie.poster}"
+                if not poster_path:
+                    text = "You have to reply to a image with dimensions 289, 512"
+                else:
+                    _set_poster(poster_path, movie_id)
+                    text = f"Poster updated for '{movie.title}'\nNew poster at: {config.BASE_URL + movie.poster}"
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
