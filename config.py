@@ -7,6 +7,7 @@ class BaseConfig:
     BOT_TOKEN = os.environ["BOT_TOKEN"]
     BASE_URL = os.environ["BASE_URL"]
     POSTER_PATH = os.environ["POSTER_PATH"]
+    ADMINS = os.environ["ADMINS"]
 
 
 config = BaseConfig()

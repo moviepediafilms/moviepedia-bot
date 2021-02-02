@@ -16,7 +16,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from config import config
 
 Base = declarative_base()
-engine = create_engine(config.BOT_DATABASE_URL, echo=True)
+engine = create_engine(config.BOT_DATABASE_URL, echo=False)
 Session = sessionmaker(bind=engine)
 session = Session()
 
