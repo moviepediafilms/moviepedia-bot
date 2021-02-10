@@ -6,7 +6,6 @@ from functools import wraps
 from telegram.ext import Filters
 
 from models.core import Movie, session as core_session
-from models.bot import User, Command, session as bot_session
 from config import config
 
 logger = logging.getLogger()
@@ -96,6 +95,8 @@ def set_poster(update, context):
         movie = core_session.query(Movie).filter_by(id=int(movie_id)).first()
     except IndexError:
         text = "missing movie ID! usage: reply to an image with '/set_poster <movie_id>' to update poster for a movie"
+    except Exception as ex:
+        text = str(ex)
     else:
         if not movie:
             text = "no such movie exists"
@@ -112,4 +113,5 @@ def set_poster(update, context):
                     _set_poster(poster_path, movie_id)
                     _update_movie(movie_id)
                     text = f"Poster updated for '{movie.title}'\nNew poster at: {config.BASE_URL + movie.poster}"
+
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
