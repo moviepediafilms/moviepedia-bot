@@ -5,7 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from config import config
 
 Base = declarative_base()
-engine = create_engine(config.CORE_DATABASE_URL, echo=False, pool_recycle=3600)
+engine = create_engine(
+    config.CORE_DATABASE_URL, echo=False, pool_recycle=3600, pool_pre_ping=True
+)
 Session = sessionmaker(bind=engine)
 session = Session()
 
