@@ -9,7 +9,6 @@ engine = create_engine(
     config.CORE_DATABASE_URL, echo=False, pool_recycle=3600, pool_pre_ping=True
 )
 Session = sessionmaker(bind=engine)
-session = Session()
 
 
 class User(Base):

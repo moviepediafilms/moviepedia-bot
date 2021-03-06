@@ -5,7 +5,7 @@ from functools import wraps
 
 from telegram.ext import Filters
 
-from models.core import Movie, session as core_session
+from models.core import Movie, Session as CoreSession
 from config import config
 
 logger = logging.getLogger()
@@ -80,7 +80,7 @@ def _set_poster(poster_path, movie_id):
     )
 
 
-def _update_movie(movie_id):
+def _update_movie(movie_id, core_session):
     movie = core_session.query(Movie).filter_by(id=movie_id).first()
     if not movie.poster:
         movie.poster = "/media/posters/" + get_post_name(movie_id)
@@ -91,6 +91,7 @@ def _update_movie(movie_id):
 def set_poster(update, context):
     text = ""
     try:
+        core_session = CoreSession()
         movie_id = context.args[0]
         movie = core_session.query(Movie).filter_by(id=int(movie_id)).first()
     except IndexError:
@@ -111,7 +112,8 @@ def set_poster(update, context):
                     text = "You have to reply to a image with dimensions 289, 512"
                 else:
                     _set_poster(poster_path, movie_id)
-                    _update_movie(movie_id)
+                    _update_movie(movie_id, core_session)
                     text = f"Poster updated for '{movie.title}'\nNew poster at: {config.BASE_URL + movie.poster}"
-
+    finally:
+        core_session.close()
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
