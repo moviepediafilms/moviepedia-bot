@@ -2,6 +2,7 @@ import os
 import logging
 import time
 from functools import wraps
+import shutil
 
 from telegram.ext import Filters
 
@@ -74,7 +75,7 @@ def _set_poster(poster_path, movie_id):
     """
     src_poster = os.path.join(".", poster_path)
     dest_poster = os.path.join(config.POSTER_PATH, get_post_name(movie_id))
-    os.rename(src_poster, dest_poster)
+    shutil.move(src_poster, dest_poster)
     logger.info(
         f"move {poster_path} to {config.POSTER_PATH}/{str(movie_id).rjust(10, '0')}.png"
     )
